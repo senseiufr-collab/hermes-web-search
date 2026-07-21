@@ -12,7 +12,7 @@
 
 ## Установка
 ```bash
-cd "/Users/andrew/Documents/скрипты hermes/web-search"
+cd web-search
 bash install.sh
 source ~/.zshrc
 ```

@@ -12,7 +12,7 @@ Supports Bing, DuckDuckGo, optional Google CSE, dorks, caching, and JSON/CSV exp
 
 ## Install
 ```bash
-cd "/Users/andrew/Documents/скрипты hermes/web-search"
+cd web-search
 bash install.sh
 source ~/.zshrc
 ```
