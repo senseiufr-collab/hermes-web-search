@@ -1,17 +1,38 @@
 #!/usr/bin/env bash
 set -euo pipefail
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PYTHON="${SCRIPT_DIR}/.venv/bin/python"
-if [ ! -x "${PYTHON}" ]; then
-  python3 -m venv "${SCRIPT_DIR}/.venv"
-  "${SCRIPT_DIR}/.venv/bin/python" -m pip install --upgrade pip setuptools wheel >/dev/null 2>&1 || true
-  "${SCRIPT_DIR}/.venv/bin/python" -m pip install -r "${SCRIPT_DIR}/requirements.txt" >/dev/null
+
+echo "🌐 Hermes Web Search — Installer"
+echo "=================================="
+echo ""
+
+if ! command -v python3 &>/dev/null; then
+    echo "❌ Python 3 not found."
+    exit 1
 fi
+echo "✓ Python $(python3 --version)"
 
-mkdir -p "$HOME/.cache/web-search"
+pip3 install requests beautifulsoup4 --quiet
+echo "✓ Dependencies installed"
 
-echo "installer:configure shell aliases"
-grep -q "alias hsearch=" "$HOME/.zshrc" 2>/dev/null || printf '%s\n' "alias hsearch='${SCRIPT_DIR}/hsearch'" >> "$HOME/.zshrc"
-grep -q "alias hscan=" "$HOME/.zshrc" 2>/dev/null || printf '%s\n' "alias hscan='${SCRIPT_DIR}/hscan'" >> "$HOME/.zshrc"
+# Add aliases
+SHELL_RC="$HOME/.zshrc"
+for alias_cmd in \
+    "alias hsearch='python3 $(pwd)/search.py'" \
+    "alias hscan='python3 $(pwd)/business/scan.py'"; do
+    name="${alias_cmd%%=*}"
+    if grep -q "$name" "$SHELL_RC" 2>/dev/null; then
+        echo "✓ $name already exists"
+    else
+        echo "$alias_cmd" >> "$SHELL_RC"
+        echo "✓ Added $name"
+    fi
+done
 
-echo "Installed. Restart shell or run: source ~/.zshrc"
+echo ""
+echo "✅ Install complete!"
+echo ""
+echo "Quick test:"
+echo "  python3 search.py \"test\" -n 2 -b brave"
+echo ""
+echo "Or after restarting terminal:"
+echo "  hsearch \"your query\" -n 10"
